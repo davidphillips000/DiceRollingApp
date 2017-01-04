@@ -5,7 +5,7 @@ using System.IO;
 public class CameraController : MonoBehaviour
 {
 	public WebCamTexture mCamera = null;
-	public GameObject plane,plane2;
+	public GameObject plane;
 	public Texture2D testTexture;
 	// Use this for initialization
 
@@ -30,29 +30,32 @@ public class CameraController : MonoBehaviour
 		//auto rotate to correct side, wait for click to load pic on tht side
 		//arrow keys move cube
 		if(Input.GetKey(KeyCode.Space)){
-			StopAllCoroutines();
-		
-			//Texture2D PhotoTaken= new Texture2D(mCamera.width, mCamera.height);
-			Texture2D PhotoTaken= new Texture2D(mCamera.width, mCamera.height);
-
-			PhotoTaken.SetPixels(mCamera.GetPixels());
-			PhotoTaken.Apply();
-
-			mCamera.Stop ();
-
-			plane2.GetComponent<Renderer>().material.mainTexture = mCamera;
-
-			//var bytes1 = testTexture.EncodeToPNG ();
-			var bytes1 = PhotoTaken.EncodeToPNG ();
-			var path = System.IO.Path.Combine("Assets/Resources/" , "gloopity gloop" + ".png");
-			System.IO.File.WriteAllBytes (path, bytes1);
-			Debug.Log(path);
+//			StopAllCoroutines();
+//		
+//			//Texture2D PhotoTaken= new Texture2D(mCamera.width, mCamera.height);
+//			Texture2D PhotoTaken= new Texture2D(mCamera.width, mCamera.height);
+//
+//			PhotoTaken.SetPixels(mCamera.GetPixels());
+//			PhotoTaken.Apply();
+//
+//			mCamera.Stop ();
+//
+//			plane2.GetComponent<Renderer>().material.mainTexture = mCamera;
+//
+//			//var bytes1 = testTexture.EncodeToPNG ();
+//			var bytes1 = PhotoTaken.EncodeToPNG ();
+//			var path = System.IO.Path.Combine("Assets/Resources/" , "gloopity gloop" + ".png");
+//			System.IO.File.WriteAllBytes (path, bytes1);
+//			Debug.Log(path);
 
 		}
 	}
+	public void StartWebCam(){
+		StopAllCoroutines();
+		StartCoroutine(StartWebCamRoutine());
+	}
 
-
-	IEnumerator Start ()
+	IEnumerator StartWebCamRoutine ()
 	{
 
 		//SaveTextureToFile(testTexture, "wooo");
@@ -61,12 +64,20 @@ public class CameraController : MonoBehaviour
 		plane.GetComponent<Renderer>().material.mainTexture = mCamera;
 
 		mCamera.Play ();
+
+		yield return new WaitForEndOfFrame(); 
+
+
 		if(mCamera.width <= 16){ 
 			while(!mCamera.didUpdateThisFrame){ 
 				yield return new WaitForEndOfFrame(); 
 			} 
 			mCamera.Pause(); 
+			yield return new WaitForEndOfFrame(); 
+
 			Color32[] colors = mCamera.GetPixels32(); 
+			yield return new WaitForEndOfFrame(); 
+
 			mCamera.Stop();
 
 			yield return new WaitForEndOfFrame();
